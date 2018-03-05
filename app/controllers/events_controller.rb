@@ -1,9 +1,12 @@
 class EventsController < ApplicationController
 
+
   # GET /events/index
   # GET /events
   def index
     @events = Event.page( params[:page]).per(10)
+
+    Rails.logger.debug("xxxx": + @events.count)
 
     respond_to do |format|
       format.html
