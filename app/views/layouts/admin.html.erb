@@ -12,6 +12,7 @@
   <div class="container">
     <div class="row">
     <div class="col-md-12">
+    <h1>Admin Interface</h1>
       <% if flash[:notice].present? %>
       <div class="alert alert-success" role="alert">
       <%= flash[:notice] %>
@@ -22,23 +23,9 @@
         <%= flash[:alert] %>
       </div>
       <% end %>
-
-    <% if current_user %>
-      Hi, <%= current_user.email %>
-      <%= link_to('登出', destroy_user_session_path, :method => :delete) %> |
-      <%= link_to('修改密码', edit_registration_path(:user)) %>
-    <% else %>
-      <%= link_to('注册', new_registration_path(:user)) %> |
-      <%= link_to('登入', new_session_path(:user)) %>
-    <% end %>
-
-
-
       <%= yield %>
 
-      <% if current_user && current_user.admin? %>
       <%= link_to "admin", admin_events_path %>
-      <% end %>
     </div>
     </div>
   </div>

@@ -5,3 +5,11 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
+
+Category.create!( :name => "conf" )
+Category.create!( :name => "Meeting" )
+Category.create!( :name => "kaigi" )
+
+Group.create!( :name => "Ruby" )
+Group.create!( :name => "Java" )
+Group.create!( :name => "JavaScript" )

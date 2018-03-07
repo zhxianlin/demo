@@ -1,12 +1,24 @@
 class EventsController < ApplicationController
 
+  before_action :authenticate_user!, :except => [:index]
 
   # GET /events/index
   # GET /events
   def index
-    @events = Event.page( params[:page]).per(10)
+    if params[:keyword]
+      @events = Event.where( [ "name like ?", "%#{params[:keyword]}%" ] )
+    else
+      @events = Event.all
+    end
 
-    Rails.logger.debug("xxxx": + @events.count)
+    if params[:order]
+      sort_by = (params[:order] == 'name') ? 'name' : "id"
+      @events = @events.order(sort_by)
+    end
+
+    @events = @events.page( params[:page]).per(10)
+
+    # Rails.logger.debug("xxxx": + @events.count)
 
     respond_to do |format|
       format.html
@@ -22,6 +34,11 @@ class EventsController < ApplicationController
     end
   end
 
+  #get /events/latest
+  def latest
+    @events = Event.order("id DESC").limit(3)
+  end
+
   #GET /events/show/:id
   def show
     @event = Event.find(params[:id])
@@ -33,6 +50,11 @@ class EventsController < ApplicationController
       format.json {render :json => {id: @event.id, name: @event.name, created_time: @event.created_at }.to_json }
     end
   end
+
+  #GET /events/:id/dashboard
+  def dashboard
+    @event = Event.find( params[:id] )
+  end
   #GET /events/new
   def new
     @event = Event.new
@@ -41,6 +63,8 @@ class EventsController < ApplicationController
   #post /events/creat
   def create
     @event = Event.new(event_params)
+
+    @event.user= current_user
 
     if @event.save
       flash[:notice] = "新增成功"
@@ -72,8 +96,21 @@ class EventsController < ApplicationController
     redirect_to events_path
   end
 
+
+  def bulk_update
+    # Event.destroy_all
+    ids = Array( params[:ids])
+    events = ids.map{ |i| Event.find_by_id(i) }.compact
+    if params[:commit] == "Delete"
+      events.each {|e| e.destroy}
+    elsif params[:commit] == "Publish"
+      events.each { |e| e.update( :status => "published") }
+    end
+    redirect_to events_path
+  end
+
   private
   def event_params
-    params.require(:event).permit(:name, :description)
+    params.require(:event).permit(:name, :description, :category_id, :status, :group_ids => [])
   end
 end
