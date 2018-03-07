@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180307064840) do
+ActiveRecord::Schema.define(version: 20180307073856) do
 
   create_table "attendees", force: :cascade do |t|
     t.string "name"
@@ -45,6 +45,10 @@ ActiveRecord::Schema.define(version: 20180307064840) do
     t.string "status"
     t.integer "category_id"
     t.integer "user_id"
+    t.string "logo_file_name"
+    t.string "logo_content_type"
+    t.integer "logo_file_size"
+    t.datetime "logo_updated_at"
     t.index ["category_id"], name: "index_events_on_category_id"
     t.index ["user_id"], name: "index_events_on_user_id"
   end

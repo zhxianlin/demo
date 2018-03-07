@@ -8,7 +8,7 @@ class EventsController < ApplicationController
     if params[:keyword]
       @events = Event.where( [ "name like ?", "%#{params[:keyword]}%" ] )
     else
-      @events = Event.all
+      @events = Event.order("id DESC")
     end
 
     if params[:order]
@@ -79,6 +79,9 @@ class EventsController < ApplicationController
   end
 
   def update
+    if params[:_remove_logo] == "1"
+      @event.logo = nil
+    end
     @event = Event.find(params[:id])
     if @event.update(event_params)
       flash[:notice] = "编辑成功"
@@ -111,6 +114,6 @@ class EventsController < ApplicationController
 
   private
   def event_params
-    params.require(:event).permit(:name, :description, :category_id, :status, :group_ids => [])
+    params.require(:event).permit(:name, :logo, :description, :category_id, :status, :group_ids => [])
   end
 end
